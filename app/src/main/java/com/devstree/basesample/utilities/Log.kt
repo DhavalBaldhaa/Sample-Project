@@ -1,7 +1,7 @@
-package com.devstree.foodguru.utility
+package com.devstree.basesample.utilities
 
 import android.util.Log
-import com.devstree.foodguru.BuildConfig
+import com.devstree.basesample.BuildConfig
 
 object Log {
     private var className: String? = null

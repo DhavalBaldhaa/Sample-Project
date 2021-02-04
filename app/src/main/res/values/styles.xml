@@ -1,39 +1,196 @@
 <resources>
-    <!-- Base application theme. -->
-    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Customize your theme here. -->
+
+    <style name="AppTheme" parent="Theme.MaterialComponents.Light.NoActionBar.Bridge">
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <!--        <item name="bottomSheetDialogTheme">@style/BottomSheetDialogTheme</item>-->
+        <!--        <item name="android:dropDownListViewStyle">@style/ListViewStyle</item>-->
+
+        <!--        <item name="android:windowLightStatusBar">true</item>-->
+        <!--        <item name="android:statusBarColor">@color/white</item>-->
+
+        <!--        <item name="android:navigationBarColor">@color/background</item>-->
+        <!--        <item name="android:windowLightNavigationBar" tools:ignore="NewApi">true</item>-->
+        <!--        <item name="android:navigationBarDividerColor" tools:ignore="NewApi">@color/lightest_grey-->
+        <!--        </item>-->
     </style>
 
 
-    <!-- please change color and fontfamily according to your requirement-->
-
-
-
-    <style name="EditTextBoxTheme">
-        <item name="android:background">@drawable/bg_edit_text_box</item>
-        <item name="android:paddingLeft">15dp</item>
-        <item name="android:paddingRight">15dp</item>
-        <item name="android:paddingTop">8dp</item>
-        <item name="android:paddingBottom">8dp</item>
-        <item name="android:maxLines">1</item>
-        <item name="android:textColorHint">@android:color/black</item>
-        <item name="android:textColor">@android:color/black</item>
-        <!--<item name="android:fontFamily">@font/poppins_medium</item>-->
-        <item name="android:textSize">@dimen/text_size_x_small</item>
+    <style name="AppTheme.PopupOverlay" parent="ThemeOverlay.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorAccent</item>
     </style>
 
-    <style name="TextViewTheme">//for box title
-        <item name="android:textColor">@android:color/black</item>
-        <!--<item name="android:fontFamily">@font/poppins_regular</item>-->
-        <item name="android:textSize">@dimen/text_size_x_micro</item>
-        <item name="android:maxLines">1</item>
+    <style name="ListViewStyle" parent="@android:style/Widget.ListView">
+        <item name="android:divider">@drawable/divider_decorator_light</item>
+        <item name="android:dividerHeight">@dimen/_1sdp</item>
+    </style>
+
+    <style name="BottomNavigationItemTextActive">
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/primary_black</item>
+        <!--        <item name="android:fontFamily">@font/futura_medium</item>-->
+    </style>
+
+    <style name="BottomNavigationItemTextInactive">
+        <item name="android:textSize">@dimen/_8ssp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textColor">@color/primary_black</item>
+        <!--        <item name="android:fontFamily">@font/futura_medium</item>-->
+    </style>
+
+
+    <style name="ItemTextNavigationDrawerStyle">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:includeFontPadding">false</item>
+        <!--        <item name="android:fontFamily">@font/futura_medium</item>-->
+    </style>
+
+    <style name="NavigationDrawerTheme" parent="AppTheme">
+        <item name="listPreferredItemHeightSmall">@dimen/_38sdp</item>
+        <item name="android:listSelector">?attr/selectableItemBackground</item>
+    </style>
+
+
+    <style name="DialogTheme" parent="Theme.MaterialComponents.Light.Dialog.Alert.Bridge">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowIsFloating">false</item>
+    </style>
+
+    <style name="BottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/BottomSheetModal</item>
+    </style>
+
+    <style name="BottomSheetModal" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_background</item>
+    </style>
+
+    <style name="TextInputLayoutStyle" parent="Widget.Design.TextInputLayout">
+        <item name="colorPrimary">@color/secondary_black</item>
+        <item name="boxBackgroundColor">@color/white</item>
+        <item name="colorPrimaryDark">@color/white</item>
+        <item name="hintEnabled">true</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="hintTextAppearance">@style/InputLayoutHintAppearance</item>
+    </style>
+
+    <style name="InputLayoutHintAppearance" parent="TextAppearance.Design.Hint">
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <!--        <item name="android:fontFamily">@font/futura_demi</item>-->
+        <item name="android:textColor">@color/secondary_black</item>
+    </style>
+
+    <style name="TextViewStyle">
+        <item name="android:textColor">@color/primary_black</item>
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <item name="android:textColorHint">@color/secondary_black</item>
         <item name="android:ellipsize">end</item>
+        <item name="android:includeFontPadding">false</item>
+        <!--        <item name="android:fontFamily">@font/futura_book</item>-->
     </style>
 
 
-    <!--You can crate other style by using this style reference-->
+    <style name="TabTextStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/_10ssp</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:textAllCaps">true</item>
+        <!--        <item name="android:fontFamily">@font/futura_demi</item>-->
+    </style>
+
+
+    <style name="HorizontalLine">
+        <item name="android:background">@color/light_grey</item>
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/_1sdp</item>
+    </style>
+
+    <style name="SwitchStyle">
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorPrimary</item>
+    </style>
+
+    <style name="ButtonBaseStyle">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/_14ssp</item>
+        <item name="android:textColorHint">@color/white</item>
+        <item name="android:background">@drawable/button_light_blue</item>
+        <item name="android:includeFontPadding">false</item>
+        <!--        <item name="android:fontFamily">@font/futura_medium</item>-->
+    </style>
+
+    <style name="ButtonLightBlueStyle" parent="ButtonBaseStyle">
+        <item name="android:background">@drawable/button_light_blue</item>
+    </style>
+
+    <!--    <style name="ButtonDarkBlueStyle" parent="ButtonBaseStyle">-->
+    <!--        <item name="android:background">@drawable/button_dark_blue</item>-->
+    <!--    </style>-->
+
+    <style name="ButtonWhiteStyle" parent="ButtonBaseStyle">
+        <item name="android:textColor">@color/primary_black</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:background">@drawable/button_white</item>
+    </style>
+
+    <style name="ButtonWhiteTransparentStyle" parent="ButtonBaseStyle">
+        <item name="android:textColor">@color/black</item>
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:background">@drawable/button_white_transparent</item>
+    </style>
+
+    <style name="EditTextStyle">
+        <item name="android:textColor">@drawable/selector_text_color</item>
+        <item name="android:textColorHint">@color/hint_color</item>
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:drawablePadding">@dimen/_5sdp</item>
+        <item name="android:textSize">@dimen/_13ssp</item>
+        <!--        <item name="android:fontFamily">@font/futura_book</item>-->
+        <item name="theme">@style/EditTextTheme</item>
+    </style>
+
+    <style name="EditTextClickableStyle" parent="EditTextStyle">
+        <item name="android:ellipsize">end</item>
+        <item name="android:singleLine">true</item>
+        <item name="android:editable">false</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">false</item>
+        <item name="android:inputType">none</item>
+    </style>
+
+    <style name="EditTextTheme">
+        <item name="colorControlNormal">@color/hint_color</item>
+        <item name="colorControlActivated">@color/secondary_black</item>
+        <item name="colorControlHighlight">@color/secondary_black</item>
+    </style>
+
+    <style name="RecyclerViewStyle">
+        <item name="android:overScrollMode">never</item>
+        <item name="android:scrollbars">none</item>
+    </style>
+
+    <style name="ScrollViewStyle">
+        <item name="android:overScrollMode">never</item>
+        <item name="android:scrollbars">none</item>
+        <item name="android:fillViewport">true</item>
+    </style>
+
+    <style name="ToolbarTitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">@dimen/_16ssp</item>
+        <item name="android:textColor">@color/primary_black</item>
+        <!--        <item name="android:fontFamily">@font/futura_demi</item>-->
+        <item name="android:includeFontPadding">false</item>
+        <item name="android:layout_centerInParent">true</item>
+    </style>
+
+    <style name="ToolbarSubtitleAppearance" parent="@style/TextAppearance.Widget.AppCompat.Toolbar.Subtitle">
+        <item name="android:textSize">@dimen/_12ssp</item>
+        <item name="android:textColor">@color/primary_black</item>
+        <item name="android:includeFontPadding">false</item>
+        <!--        <item name="android:fontFamily">@font/futura_demi</item>-->
+    </style>
 
 </resources>

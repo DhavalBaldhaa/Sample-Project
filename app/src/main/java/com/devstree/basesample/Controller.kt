@@ -1,4 +1,4 @@
-package com.devstree.basesample.view.ui.base
+package com.devstree.basesample
 
 import android.app.Application
 import androidx.lifecycle.LifecycleObserver

@@ -5,7 +5,7 @@ import android.os.Handler
 import android.os.Looper
 import android.widget.Toast
 import androidx.annotation.StringRes
-import com.devstree.basesample.view.ui.base.Controller
+import com.devstree.basesample.Controller
 import java.util.*
 
 /**

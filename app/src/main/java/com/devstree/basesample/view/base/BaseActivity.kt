@@ -1,22 +1,32 @@
-package com.devstree.basesample.view.ui.base
+package com.devstree.basesample.view.base
 
 import android.app.AlertDialog
+import android.app.DatePickerDialog
 import android.app.ProgressDialog
+import android.app.TimePickerDialog
 import android.content.Context
 import android.content.DialogInterface
 import android.view.View
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
+import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.devstree.basesample.R
-import com.devstree.basesample.utilities.PreferenceHelper
-import com.devstree.foodguru.utility.justTry
+import com.devstree.basesample.model.ObjectBaseModel
+import com.devstree.basesample.model.User
+import com.devstree.basesample.network.AbstractResponseListener
+import com.devstree.basesample.network.NetworkCall
+import com.devstree.basesample.utilities.AppHelper
+import com.devstree.basesample.utilities.PreferenceManager
+import com.devstree.basesample.utilities.SharedPrefConstant
+import com.devstree.basesample.utilities.justTry
+import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
-import com.omninos.yabisso.utility.SharedPrefConstant
+import com.google.firebase.messaging.FirebaseMessaging
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,6 +39,20 @@ abstract class BaseActivity : AppCompatActivity() {
     private val strUserEndPoints = ArrayList<String>()
     private var alertDialog: AlertDialog? = null
     private var initialLocale: String? = null
+
+    abstract fun initUi()
+
+    override fun setContentView(view: View?) {
+        super.setContentView(view)
+        initUi()
+    }
+
+    fun fullScreenActivity() {
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_FULLSCREEN,
+            WindowManager.LayoutParams.FLAG_FULLSCREEN
+        )
+    }
 
     fun showSnackBar(view: View?, str: String?) {
         if (view == null) return
@@ -65,7 +89,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     private var dialog: ProgressDialog? = null
     fun showProgressDialog() {
-        showProgressDialog("")
+        showProgressDialog(getString(R.string.please_wait))
     }
 
     fun showProgressDialog(msg: String?) {
@@ -90,7 +114,10 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun setSecureActivity() {
-        window.setFlags(WindowManager.LayoutParams.FLAG_SECURE, WindowManager.LayoutParams.FLAG_SECURE)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_SECURE,
+            WindowManager.LayoutParams.FLAG_SECURE
+        )
     }
 
     fun keepScreenOn() {
@@ -100,24 +127,20 @@ abstract class BaseActivity : AppCompatActivity() {
     // set toolbar with center text and allow home button if set isHomeUpEnabled is true
     protected fun setUpToolBar(title: String, isHomeUpEnabled: Boolean) {
         try {
-//            toolbar = findViewById(R.id.toolbar)
-//            toolbarTitle = findViewById(R.id.txtToolbarTitle)
-//            setSupportActionBar(toolbar)
-//            supportActionBar?.setDisplayShowTitleEnabled(false)
-//            toolbarTitle?.text = title
-//            if (isHomeUpEnabled) {
-//                imgBack?.visibility = View.VISIBLE.takeIf { isHomeUpEnabled } ?: View.GONE
-//                imgBack?.setOnClickListener { onBackPressed() }
-//            }
+            toolbar = findViewById(R.id.toolBar)
+            toolbarTitle = findViewById(R.id.txtToolbarTitle)
+            setSupportActionBar(toolbar)
+            supportActionBar?.setDisplayShowTitleEnabled(false)
+            toolbarTitle?.text = title
+            val back: ImageView? = findViewById(R.id.imgBack)
+            back?.visibility = View.VISIBLE.takeIf { isHomeUpEnabled } ?: View.GONE
+            if (isHomeUpEnabled) {
+                back?.setOnClickListener { onBackPressed() }
+            }
         } catch (e: Exception) {
         }
     }
 
-//    protected fun showHorizontalProgressBar(isVisible: Boolean) {
-//        Utils.executeOnMain(Runnable {
-//            progress_horizontal?.visibility = View.VISIBLE.takeIf { isVisible } ?: View.GONE
-//        })
-//    }
 
     protected fun setUpToolBar(@StringRes title: Int, isHomeUpEnabled: Boolean) {
         setUpToolBar(getString(title), isHomeUpEnabled)
@@ -127,11 +150,32 @@ abstract class BaseActivity : AppCompatActivity() {
         toolbarTitle?.setText(title)
     }
 
+    open fun getFcmToken(callBack: (fcmToken: String, isSuccess: Boolean) -> Unit) {
+        val fcmToken = PreferenceManager.getInstance().getString(SharedPrefConstant.FCM_TOKEN)
+        if (fcmToken.isNullOrEmpty()) {
+            FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    callBack.invoke(task.exception?.localizedMessage
+                        ?: "Fetching FCM registration token failed", false)
+                    return@OnCompleteListener
+                }
+                val token = task.result
+                if (token.isNullOrEmpty()) {
+                    callBack.invoke(task.exception?.localizedMessage
+                        ?: "Fetching FCM registration token failed", false)
+                    return@OnCompleteListener
+                }
+                PreferenceManager.getInstance().putString(SharedPrefConstant.FCM_TOKEN, token)
+                callBack.invoke(token, true)
+            })
+        } else {
+            callBack.invoke(fcmToken, true)
+        }
+    }
+
     open fun logout(callBack: (isSuccess: Boolean) -> Unit) {
         try {
-            PreferenceHelper.getInstance().removeKey(SharedPrefConstant.USER_DETAILS)
-            PreferenceHelper.getInstance().removeKey(SharedPrefConstant.JWT_TOKEN)
-            PreferenceHelper.getInstance().removeKey(SharedPrefConstant.IS_EXISTS_IN_SERVER)
+            logoutActions()
             callBack.invoke(true)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -139,9 +183,13 @@ abstract class BaseActivity : AppCompatActivity() {
         }
     }
 
+    fun logoutActions() {
+        PreferenceManager.getInstance().clearPreference()
+        AppHelper.user = null
+    }
 
     open fun showAlertMessage(str: String) {
-        showAlertMessage(str, null)
+        showAlertMessage(str = str, null)
     }
 
     open fun showAlertMessage(str: String, onClickListener: DialogInterface.OnClickListener?) {
@@ -150,7 +198,7 @@ abstract class BaseActivity : AppCompatActivity() {
 
     open fun showAlertMessage(
         title: String?, str: String, isCancelable: Boolean, positiveText: String,
-        onClickListener: DialogInterface.OnClickListener?
+        onClickListener: DialogInterface.OnClickListener?,
     ): AlertDialog? {
         try {
             if (alertDialog != null && alertDialog!!.isShowing) {
@@ -158,7 +206,7 @@ abstract class BaseActivity : AppCompatActivity() {
             }
             val builder = AlertDialog.Builder(this)
                 .setMessage(str).setCancelable(isCancelable)
-                .setPositiveButton(positiveText.takeIf { positiveText.isBlank() }
+                .setPositiveButton(positiveText.takeIf { positiveText.isNotBlank() }
                     ?: getString(R.string.ok), onClickListener)
 
             if (!title.isNullOrBlank()) builder.setTitle(title)
@@ -170,7 +218,14 @@ abstract class BaseActivity : AppCompatActivity() {
         return alertDialog
     }
 
-    open fun showAlertMessage(str: String, isCancelable: Boolean, positiveText: String, nagetiveText: String, callback: (isPositive: Boolean) -> Unit): AlertDialog? {
+    open fun showAlertMessage(
+        title: String = "",
+        str: String,
+        isCancelable: Boolean,
+        positiveText: String,
+        nagetiveText: String,
+        callback: (isPositive: Boolean) -> Unit,
+    ): AlertDialog? {
         try {
             if (alertDialog != null && alertDialog!!.isShowing) {
                 alertDialog!!.dismiss()
@@ -184,7 +239,7 @@ abstract class BaseActivity : AppCompatActivity() {
                 .setNegativeButton(nagetiveText.takeIf { nagetiveText.isNotBlank() }
                     ?: getString(R.string.cancel)) { _, _ -> callback.invoke(false) }
 
-            if (!title.isNullOrBlank()) builder.setTitle(title)
+            if (!title.isBlank()) builder.setTitle(title)
 
             alertDialog = builder.show()
         } catch (e: java.lang.Exception) {
@@ -194,6 +249,7 @@ abstract class BaseActivity : AppCompatActivity() {
     }
 
     fun pickDateTime(onPickedDateTime: (calender: Calendar) -> Unit) {
+
         val currentDateTime = Calendar.getInstance()
         val startYear = currentDateTime.get(Calendar.YEAR)
         val startMonth = currentDateTime.get(Calendar.MONTH)
@@ -201,27 +257,38 @@ abstract class BaseActivity : AppCompatActivity() {
         val startHour = currentDateTime.get(Calendar.HOUR_OF_DAY)
         val startMinute = currentDateTime.get(Calendar.MINUTE)
 
-//        DatePickerDialog(mContext, R.style.DatePickerStyle, DatePickerDialog.OnDateSetListener { _, year, month, day ->
-//            TimePickerDialog(mContext, R.style.TimePickerStyle, TimePickerDialog.OnTimeSetListener { _, hour, minute ->
-//                val pickedDateTime = Calendar.getInstance()
-//                pickedDateTime.set(year, month, day, hour, minute)
-//                onPickedDateTime.invoke(pickedDateTime)
-//            }, startHour, startMinute, false).show()
-//        }, startYear, startMonth, startDay).show()
+        val timePickerDialog = TimePickerDialog(mContext, /*R.style.TimePickerStyle,*/ { _, hour, minute ->
+            val pickedDateTime = Calendar.getInstance()
+            pickedDateTime.set(startYear, startMonth, startDay, hour, minute)
+            onPickedDateTime.invoke(pickedDateTime)
+        }, startHour, startMinute, false)
+
+        timePickerDialog.show()
     }
 
-    open fun getFcmToken(callBack: (fcmToken: String, isSuccess: Boolean) -> Unit) {
-        val fcmToken = PreferenceHelper.getInstance().getString(SharedPrefConstant.FCM_TOKEN)
-        if (fcmToken.isNullOrEmpty()) {
-//            FirebaseInstanceId.getInstance().instanceId.addOnSuccessListener { instanceIdResult: InstanceIdResult ->
-//                PreferenceHelper.getInstance().putString(SharedPrefConstant.FCM_TOKEN, instanceIdResult.token)
-//                callBack.invoke(instanceIdResult.token, true)
-//            }.addOnFailureListener { exception ->
-//                callBack.invoke(exception.localizedMessage
-//                    ?: getString(R.string.something_went_wrong), false)
-//            }
-        } else {
-            callBack.invoke(fcmToken, true)
-        }
+    fun pickPreviousDate(selectedDate: Calendar? = null, onPickedDate: (calender: Calendar) -> Unit) {
+        val currentDateTime = selectedDate.takeIf { selectedDate == null } ?: Calendar.getInstance()
+        val startYear = currentDateTime.get(Calendar.YEAR)
+        val startMonth = currentDateTime.get(Calendar.MONTH)
+        val startDay = currentDateTime.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(mContext, { _, year, month, day ->
+            val pickedDateTime = Calendar.getInstance()
+            pickedDateTime.set(year, month, day)
+            onPickedDate.invoke(pickedDateTime)
+        }, startYear, startMonth, startDay)
+
+        datePickerDialog.datePicker.maxDate = Date().time
+        datePickerDialog.show()
+    }
+
+    fun getUserProfile(callback: (data: User) -> Unit) {
+        NetworkCall.getUserProfile(object : AbstractResponseListener<ObjectBaseModel<User>>() {
+            override fun result(result: ObjectBaseModel<User>?) {
+                if (result != null) {
+                    callback.invoke(result.data)
+                }
+            }
+        })
     }
 }

@@ -1,4 +1,4 @@
-package com.devstree.basesample.view.ui.base;
+package com.devstree.basesample.view.base;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
