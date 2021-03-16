@@ -1,11 +1,9 @@
-package com.devstree.foodguru.common
+package com.devstree.basesample.view.base
 
 import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.fragment.app.Fragment
-import com.devstree.basesample.view.base.BaseActivity
-import com.devstree.basesample.view.base.NavigationActivity
 import java.util.*
 
 abstract class BaseFragment : Fragment() {

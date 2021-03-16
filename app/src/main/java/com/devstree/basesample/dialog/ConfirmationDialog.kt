@@ -1,4 +1,4 @@
-package com.devstree.urenox.dialog
+package com.devstree.basesample.dialog
 
 import android.content.DialogInterface
 import android.os.Bundle

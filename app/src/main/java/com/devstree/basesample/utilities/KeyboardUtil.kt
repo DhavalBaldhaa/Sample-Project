@@ -1,4 +1,4 @@
-package com.devstree.foodguru.utility
+package com.devstree.basesample.utilities
 
 import android.app.Activity
 import android.content.Context
